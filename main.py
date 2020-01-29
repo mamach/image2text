@@ -1,3 +1,4 @@
+from flask import Flask, request, redirect, url_for, jsonify
 import argparse
 import logging
 import os
@@ -5,9 +6,39 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import optparse
+import time
+from werkzeug.datastructures import ImmutableMultiDict
+import pdb
+import requests 
+from werkzeug.utils import secure_filename
 
 from constants import VALID_IMAGE_EXTENSIONS, WINDOWS_CHECK_COMMAND, DEFAULT_CHECK_COMMAND, TESSERACT_DATA_PATH_VAR
 
+UPLOAD_FOLDER = 'C:\\Users\\mahesh.chandra\\Desktop\\Projects\\myrepos\\image2text\\uploads'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+start = int(round(time.time()))
+
+@app.route("/")
+def hello_world():
+    return "Hello world mahesh chandra"
+
+@app.route('/snip', methods=['POST'])
+def snip():
+  if request.method == 'POST':
+    file = request.files['file']
+    filename = secure_filename(file.filename)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    print(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    return smartExtract(os.path.join(app.config['UPLOAD_FOLDER'], filename), filename)
+
+def smartExtract(filename, image_file_name):
+    pdb.set_trace()
+    return run_tesseract(filename, 'output_path', image_file_name).encode("utf-8")
 
 def create_directory(path):
     """
@@ -161,33 +192,7 @@ def main(input_path, output_path):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser._action_groups.pop()
-    required = parser.add_argument_group('required arguments')
-    optional = parser.add_argument_group('optional arguments')
-    required.add_argument('-i', '--input', help="Single image file path or images directory path", required=True)
-    optional.add_argument('-o', '--output', help="(Optional) Output directory for converted text")
-    optional.add_argument('-d', '--debug', action='store_true', help="Enable verbose DEBUG logging")
+    parser = optparse.OptionParser(usage="python main.py -p ")
+    parser.add_option('-p', '--port', action='store', dest='port', help='The port to listen on.')
+    app.run(host='0.0.0.0', port=8000, debug=True)
 
-    args = parser.parse_args()
-    input_path = os.path.abspath(args.input)
-
-    if args.output:
-        output_path = os.path.abspath(args.output)
-    else:
-        output_path = None
-
-    if args.debug:
-        logging.getLogger().setLevel(logging.DEBUG)
-    else:
-        logging.getLogger().setLevel(logging.INFO)
-
-    logging.debug("Input Path is {}".format(input_path))
-
-    # Check Python version
-    if sys.version_info[0] < 3:
-        logging.error("You are using Python {0}.{1}. Please use Python>=3".format(
-            sys.version_info[0], sys.version_info[1]))
-        exit()
-
-    main(input_path, output_path)
