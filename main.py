@@ -15,7 +15,8 @@ from werkzeug.utils import secure_filename
 
 from constants import VALID_IMAGE_EXTENSIONS, WINDOWS_CHECK_COMMAND, DEFAULT_CHECK_COMMAND, TESSERACT_DATA_PATH_VAR
 
-UPLOAD_FOLDER = 'C:\\Users\\mahesh.chandra\\Desktop\\Projects\\myrepos\\image2text\\uploads'
+UPLOAD_FOLDER = '/projects/image2text_mine/uploads'
+# UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
@@ -38,7 +39,7 @@ def snip():
 
 def smartExtract(filename, image_file_name):
     pdb.set_trace()
-    return run_tesseract(filename, 'output_path', image_file_name).encode("utf-8")
+    return run_tesseract(filename, 'output_path', image_file_name)
 
 def create_directory(path):
     """
@@ -70,24 +71,19 @@ def get_command():
 
 
 def run_tesseract(filename, output_path, image_file_name):
+    pdb.set_trace()
     # Run tesseract
     filename_without_extension = os.path.splitext(filename)[0]
     # If no output path is provided
-    if not output_path:
-        temp_dir = tempfile.mkdtemp()
-        temp_file = os.path.join(temp_dir, filename_without_extension)
-        subprocess.run(['tesseract', image_file_name, temp_file],
-                       stdout=subprocess.PIPE,
-                       stderr=subprocess.PIPE)
-        with open('{}.txt'.format(temp_file), 'r', encoding="utf8") as f:
-            text = f.read()
-        shutil.rmtree(temp_dir)
-        return text
-    text_file_path = os.path.join(output_path, filename_without_extension)
-    subprocess.run(['tesseract', image_file_name, text_file_path],
-                   stdout=subprocess.PIPE,
-                   stderr=subprocess.PIPE)
-    return
+    pdb.set_trace()
+    temp_dir = tempfile.mkdtemp()
+    temp_file = os.path.join(temp_dir, filename_without_extension)
+    pdb.set_trace()
+    subprocess.run(['tesseract', image_file_name, temp_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    with open('{}.txt'.format(temp_file), 'r', encoding="utf8") as f:
+        text = f.read()
+    shutil.rmtree(temp_dir)
+    return text
 
 
 def check_pre_requisites_tesseract():
