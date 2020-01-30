@@ -38,7 +38,7 @@ def snip():
     return smartExtract(os.path.join(app.config['UPLOAD_FOLDER'], filename), filename)
 
 def smartExtract(filename, image_file_name):
-    pdb.set_trace()
+    # pdb.set_trace()
     return run_tesseract(filename, 'output_path', image_file_name)
 
 def create_directory(path):
@@ -71,15 +71,15 @@ def get_command():
 
 
 def run_tesseract(filename, output_path, image_file_name):
-    pdb.set_trace()
+    # pdb.set_trace()
     # Run tesseract
     filename_without_extension = os.path.splitext(filename)[0]
     # If no output path is provided
-    pdb.set_trace()
+    # pdb.set_trace()
     temp_dir = tempfile.mkdtemp()
     temp_file = os.path.join(temp_dir, filename_without_extension)
-    pdb.set_trace()
-    subprocess.run(['tesseract', image_file_name, temp_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # pdb.set_trace()
+    subprocess.run(['tesseract', filename, temp_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     with open('{}.txt'.format(temp_file), 'r', encoding="utf8") as f:
         text = f.read()
     shutil.rmtree(temp_dir)
