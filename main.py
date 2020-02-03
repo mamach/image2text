@@ -15,7 +15,7 @@ from werkzeug.utils import secure_filename
 
 from constants import VALID_IMAGE_EXTENSIONS, WINDOWS_CHECK_COMMAND, DEFAULT_CHECK_COMMAND, TESSERACT_DATA_PATH_VAR
 
-UPLOAD_FOLDER = '/projects/image2text_mine/uploads'
+UPLOAD_FOLDER = '/projects/image2text/uploads'
 # UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
